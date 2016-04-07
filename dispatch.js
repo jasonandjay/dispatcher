@@ -6,7 +6,10 @@
 	}
 })(typeof window !== "undefined" ? window : this, function (window) {
 
-	var Dispatcher = {
+    function Dispatcher(){
+        //null
+    }
+	Dispatcher.prototype = {
 		store: {},
 		/**
 		 * 获取事件在列表中的位置
@@ -78,7 +81,7 @@
 			var event = this.store[eventType];
 			if (event && Array.isArray(event)) {
 				for (var i = 0; i < event.length; i++) {
-					event[i].callback.call(context, data, eventType);
+					event[i].callback.call(event[i].context, data, eventType);
 				}
 			}
 		}
