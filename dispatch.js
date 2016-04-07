@@ -14,7 +14,7 @@
 		 * @param callback
 		 * @private
 		 */
-		_evIndex: function (context, callback) {
+		_evIndex: function (event, context, callback) {
 			var index = -1;
 			for (var i = 0; i <= event.length; i++) {
 				if (event[i].context === contex && event[i].callback === callback) {
@@ -40,9 +40,9 @@
 				callback: callback
 			};
 			if (!event || !Array.isArray(event)) {
-				event = [eventObj];
-			} else if (this._evIndex(context, callback) < 0) {
-				event.push(eventObj);
+                this.store[eventType] = [eventObj];
+			} else if (this._evIndex(event, context, callback) < 0) {
+				this.store[eventType].push(eventObj);
 			}
 		},
 		/**
@@ -60,9 +60,9 @@
 				callback: callback
 			};
 			if (event && Array.isArray(event)) {
-				var index = this._evIndex(context, callback);
+				var index = this._evIndex(event, context, callback);
 				if (index >= 0) {
-					event.splice(index, 1);
+					this.store[eventType].splice(index, 1);
 				}
 			}
 		},
@@ -78,7 +78,7 @@
 			var event = this.store[eventType];
 			if (event && Array.isArray(event)) {
 				for (var i = 0; i < event.length; i++) {
-					event.callback.call(context, data, eventType);
+					event[i].callback.call(context, data, eventType);
 				}
 			}
 		}
