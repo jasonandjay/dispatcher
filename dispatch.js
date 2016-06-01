@@ -1,36 +1,39 @@
-function Dispatcher(){
-	//null
-}
-Dispatcher.prototype = {
-	store: {},
+//React 路由分发器
+
+class Dispatch {
+	constructor() {
+		this.store = {};
+	}
+
 	/**
 	 * 获取事件在列表中的位置
 	 * @param context
 	 * @param callback
 	 * @private
 	 */
-	_evIndex: function (event, context, callback) {
-		var index = -1;
-		for (var i = 0; i <= event.length; i++) {
+	_evIndex(event, context, callback) {
+		let index = -1;
+		for (let i = 0; i <= event.length; i++) {
 			if (event[i].context === contex && event[i].callback === callback) {
 				index = i;
 				break;
 			}
 		}
 		return index;
-	},
+	}
+
 	/**
 	 * 绑定事件
 	 * @param eventType string 事件类型
 	 * @param context Object callback的this作用域
 	 * @param callback
 	 */
-	on: function (context, eventType, callback) {
-		if(typeof eventType != 'string' || typeof callback != 'function'){
-			return ;
+	on(context, eventType, callback) {
+		if (typeof eventType != 'string' || typeof callback != 'function') {
+			return;
 		}
-		var event = this.store[eventType];
-		var eventObj = {
+		let event = this.store[eventType];
+		let eventObj = {
 			context: context,
 			callback: callback
 		};
@@ -39,42 +42,48 @@ Dispatcher.prototype = {
 		} else if (this._evIndex(event, context, callback) < 0) {
 			this.store[eventType].push(eventObj);
 		}
-	},
+	}
+
 	/**
 	 * 解绑事件
 	 * @param eventType string
 	 * @param callback 回调
 	 */
-	off: function (context, eventType, callback) {
-		if(typeof eventType != 'string' || typeof callback != 'function'){
-			return ;
+	off(context, eventType, callback) {
+		if (typeof eventType != 'string' || typeof callback != 'function') {
+			return;
 		}
-		var event = this.store[eventType];
-		var eventObj = {
+		let event = this.store[eventType];
+		let eventObj = {
 			context: context,
 			callback: callback
 		};
 		if (event && Array.isArray(event)) {
-			var index = this._evIndex(event, context, callback);
+			let index = this._evIndex(event, context, callback);
 			if (index >= 0) {
 				this.store[eventType].splice(index, 1);
 			}
 		}
-	},
+	}
+
 	/**
 	 * 广播某个事件
 	 * @param eventType 时间类型
 	 * @param data 数据
 	 */
-	emit: function (eventType, data) {
-		if(typeof eventType != 'string'){
-			return ;
+	emit(eventType, data = {}) {
+		if (typeof eventType != 'string') {
+			return;
 		}
-		var event = this.store[eventType];
+		let event = this.store[eventType];
 		if (event && Array.isArray(event)) {
-			for (var i = 0; i < event.length; i++) {
+			for (let i = 0; i < event.length; i++) {
 				event[i].callback.call(event[i].context, data, eventType);
 			}
 		}
 	}
-};
+
+}
+
+let Dispatcher = new Dispatch();
+export default Dispatcher;
